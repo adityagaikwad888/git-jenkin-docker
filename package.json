@@ -1,0 +1,27 @@
+{
+  "name": "learning-web-git-jenkins-docker-public-on-docker-hub",
+  "version": "1.0.0",
+  "description": "Simple Node.js application for CI/CD pipeline demonstration",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest --config=jest.config.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "docker",
+    "jenkins",
+    "cicd",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  }
+}
