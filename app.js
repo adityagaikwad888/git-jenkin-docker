@@ -14,6 +14,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "UP" });
 });
 
+app.get9("/date", (req, res) => {
+  res.status(200).json({ date: new Date() });
+});
+
 // Not found handler
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found", status: "error" });
