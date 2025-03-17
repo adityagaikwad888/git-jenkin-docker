@@ -14,7 +14,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "UP" });
 });
 
-app.get("/date", (req, res) => {
+app.get("/time", (req, res) => {
   res.status(200).json({ date: new Date() });
 });
 
