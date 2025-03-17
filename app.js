@@ -15,7 +15,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get9("/date", (req, res) => {
-  res.status(200).json({ date: new Date() });
+  res.status(201).json({ date: new Date() });
 });
 
 // Not found handler
