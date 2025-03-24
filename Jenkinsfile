@@ -6,7 +6,8 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         SERVER_IP = '3.110.222.51' // Your actual EC2 IP
         SSH_USER = 'ubuntu' // Or ec2-user depending on your AMI
-        SSH_KEY = credentials('amd_practice_ec2_key')
+        // SSH_KEY = credentials('amd_practice_ec2_key')
+        SSH_KEY = "/c/Users/adity/Downloads/AMD.pem"
     }
     
     stages {
@@ -44,17 +45,14 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to EC2') {
+        stage('Deploy') {
             steps {
-                echo 'Deploying to EC2 instance...'
-                sshagent(['amd_practice_ec2_key']) {
-                    // Using PowerShell to execute SSH command on Windows
-                    powershell """
-                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SERVER_IP} 'bash -s' < ./deploy.sh
-                    """
+                script {
+                    bat "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=/dev/null -i ${SSH_KEY} ubuntu@${SERVER_IP} 'sudo bash /home/ubuntu/deploy.sh'"
                 }
             }
         }
+
         stage('Docker Prune') {
             steps {
                 echo 'Cleaning unused Docker resources...'
