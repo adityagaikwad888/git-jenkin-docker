@@ -7,7 +7,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to the API", status: "success" });
+  res
+    .status(200)
+    .json({ message: "Welcome to the API on AWS", status: "success" });
 });
 
 app.get("/health", (req, res) => {

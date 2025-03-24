@@ -24,3 +24,7 @@ logs/
 # OS specific files
 .DS_Store
 Thumbs.db
+
+
+# aws
+*.pem
