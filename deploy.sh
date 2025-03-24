@@ -2,9 +2,10 @@
 
 # Variables
 IMAGE_NAME=adityagaikwad888/node-app:latest
-CONTAINER_NAME=my-node-app
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+CONTAINER_NAME=node-app-${TIMESTAMP}  # Unique name to avoid conflicts
 
-echo "Deploying $IMAGE_NAME as $CONTAINER_NAME..."
+echo "Deploying $IMAGE_NAME as $CONTAINER_NAME on port 80..."
 
 # Check if Docker is running (with sudo)
 if ! sudo docker info > /dev/null 2>&1; then
@@ -16,20 +17,34 @@ fi
 echo "Pulling latest image..."
 sudo docker pull $IMAGE_NAME
 
-# Stop and remove old container (if exists)
-echo "Cleaning up old container..."
-sudo docker stop $CONTAINER_NAME > /dev/null 2>&1 || true
-sudo docker rm $CONTAINER_NAME > /dev/null 2>&1 || true
+# Stop and remove previous containers
+echo "Cleaning up any old containers..."
+OLD_CONTAINERS=$(sudo docker ps -a -q --filter name=node-app)
+if [ ! -z "$OLD_CONTAINERS" ]; then
+  echo "Found old containers. Stopping and removing..."
+  sudo docker stop $OLD_CONTAINERS > /dev/null 2>&1 || true
+  sudo docker rm -f $OLD_CONTAINERS > /dev/null 2>&1 || true
+fi
 
-# Run updated container
-echo "Starting new container..."
-sudo docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME
+# Run updated container on port 80
+echo "Starting new container on port 80..."
+CONTAINER_ID=$(sudo docker run -d -p 80:3000 --name $CONTAINER_NAME $IMAGE_NAME)
+
+# Wait briefly for container to initialize
+sleep 2
 
 # Verify container is running
-if [ "$(sudo docker ps -q -f name=$CONTAINER_NAME)" ]; then
-  echo "Deployment successful! Container is running."
+if [ "$(sudo docker ps -q -f id=$CONTAINER_ID)" ]; then
+  PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+  echo "=============================================="
+  echo "✅ Deployment successful!"
+  echo "Container: $CONTAINER_NAME"
+  echo "Container ID: $CONTAINER_ID"
+  echo "Application URL: http://$PUBLIC_IP"
+  echo "=============================================="
 else
-  echo "Error: Container failed to start."
+  echo "Error: Container failed to start. Container logs:"
+  sudo docker logs $CONTAINER_ID
   exit 1
 fi
 

@@ -9,7 +9,10 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res
     .status(200)
-    .json({ message: "Welcome to the API on AWS PM2", status: "success" });
+    .json({
+      message: "Welcome to the API on AWS via CI/CD",
+      status: "success",
+    });
 });
 
 app.get("/health", (req, res) => {
