@@ -8,7 +8,8 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "Welcome to the APIs on AWS via CI/CD By Mike For Cloud Computing",
+    message:
+      "Welcome to the APIs on AWS via CI/CD By Mike For Cloud Computings",
     status: "success",
   });
 });
