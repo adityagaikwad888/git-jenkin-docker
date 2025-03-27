@@ -8,7 +8,7 @@ describe("API Endpoints", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe(
-      "Welcome to the APIs on AWS via CI/CD For Cloud Computings"
+      "Welcome to the APIs on AWS via CI/CD For Cloud Computing"
     );
     expect(response.body.status).toBe("success");
   });
