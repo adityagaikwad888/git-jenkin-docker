@@ -21,6 +21,22 @@ describe("API Endpoints", () => {
     expect(response.body.status).toBe("UP");
   });
 
+  it("should return current date and time", async () => {
+    const response = await request(app).get("/time");
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty("date");
+    expect(new Date(response.body.date)).toBeInstanceOf(Date);
+  });
+
+  it("should return environment variable", async () => {
+    const response = await request(app).get("/env-var");
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty("envVar");
+    expect(response.body.envVar).toBe(process.env.ENV_VAR);
+  });
+
   it("should return 404 for undefined routes", async () => {
     const response = await request(app).get("/undefined-route");
 

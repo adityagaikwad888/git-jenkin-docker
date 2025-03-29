@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +23,11 @@ app.get("/health", (req, res) => {
 
 app.get("/time", (req, res) => {
   res.status(200).json({ date: new Date() });
+});
+
+app.get("/env-var", (req, res) => {
+  const envVar = process.env.ENV_VAR;
+  res.status(200).json({ envVar });
 });
 
 // Not found handler
