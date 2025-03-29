@@ -21,11 +21,18 @@ pipeline {
         stage('Run Test') {
             steps {
                 echo 'Testing Phase...'
-                // Make .env file available for testing
+                // Set environment variables directly for tests instead of copying file
                 withCredentials([file(credentialsId: 'env-file-id', variable: 'ENV_FILE_PATH')]) {
-                    bat 'copy %ENV_FILE_PATH% .env'
-                    bat 'npm test'
-                    bat 'del .env'  // Clean up after tests
+                    // Read the env file content and set ENV_VAR for tests
+                    bat '''
+                        @echo off
+                        for /f "tokens=1,2 delims==" %%a in (%ENV_FILE_PATH%) do (
+                            if "%%a"=="ENV_VAR" (
+                                set ENV_VAR=%%b
+                            )
+                        )
+                        npm test
+                    '''
                 }
             }
         }

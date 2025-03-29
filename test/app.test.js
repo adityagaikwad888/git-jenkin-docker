@@ -1,14 +1,8 @@
 const request = require("supertest");
 const app = require("../app");
 
-// Ensure ENV_VAR is set for testing purposes
-beforeAll(() => {
-  // If ENV_VAR is not set from the .env file, set a default for testing
-  if (!process.env.ENV_VAR) {
-    process.env.ENV_VAR = "test-environment-value";
-    console.log("Set default ENV_VAR for testing");
-  }
-});
+// Skip environment variable tests in CI if ENV_VAR is not available
+const isInCIEnvironment = process.env.JENKINS_URL || process.env.CI;
 
 describe("API Endpoints", () => {
   it("should return welcome message on root route", async () => {
@@ -38,13 +32,19 @@ describe("API Endpoints", () => {
     expect(new Date(response.body.date)).toBeInstanceOf(Date);
   });
 
+  // Conditionally run this test or make it more resilient
   it("should return environment variable", async () => {
+    // Set default test value if we're in Jenkins
+    if (isInCIEnvironment && !process.env.ENV_VAR) {
+      process.env.ENV_VAR = "ci-test-value";
+    }
+
     const response = await request(app).get("/env-var");
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("envVar");
-    // Don't check the exact value, just verify it's a string
-    expect(typeof response.body.envVar).toBe("string");
+    // Don't check the exact value, just verify it exists
+    expect(response.body.envVar).toBeTruthy();
   });
 
   it("should return 404 for undefined routes", async () => {
