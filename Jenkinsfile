@@ -4,6 +4,8 @@ pipeline {
         DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "adityagaikwad888/node-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
+        // Set a default ENV_VAR for tests to avoid environment variable issues
+        ENV_VAR = "jenkins-test-value"
     }
     
     stages {
@@ -21,19 +23,8 @@ pipeline {
         stage('Run Test') {
             steps {
                 echo 'Testing Phase...'
-                // Set environment variables directly for tests instead of copying file
-                withCredentials([file(credentialsId: 'env-file-id', variable: 'ENV_FILE_PATH')]) {
-                    // Read the env file content and set ENV_VAR for tests
-                    bat '''
-                        @echo off
-                        for /f "tokens=1,2 delims==" %%a in (%ENV_FILE_PATH%) do (
-                            if "%%a"=="ENV_VAR" (
-                                set ENV_VAR=%%b
-                            )
-                        )
-                        npm test
-                    '''
-                }
+                // Use the ENV_VAR already set in environment block
+                bat 'npm test'
             }
         }
         stage('Build Docker Image') {

@@ -4,6 +4,5 @@ module.exports = {
   transform: {
     "^.+\\.js$": "babel-jest",
   },
-  // Add setupFiles to run our setup script before tests
-  setupFiles: ["./test/setup.js"],
+  // Removed setupFiles since we don't have a setup.js file
 };
