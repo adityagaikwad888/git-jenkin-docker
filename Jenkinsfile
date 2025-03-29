@@ -4,10 +4,6 @@ pipeline {
         DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "adityagaikwad888/node-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-        SERVER_IP = '3.110.222.51' // Your actual EC2 IP
-        SSH_USER = 'ubuntu' // Or ec2-user depending on your AMI
-        // SSH_KEY = credentials('amd_practice_ec2_key')
-        SSH_KEY = "/c/Users/adity/Downloads/AMD.pem"
     }
     
     stages {
@@ -31,8 +27,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                // Using the more scalable .env file approach
+                withCredentials([file(credentialsId: 'env-file-id', variable: 'ENV_FILE_PATH')]) {
+                    bat "docker build --build-arg ENV_FILE_PATH=%ENV_FILE_PATH% -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                }
             }
         }
         stage('Push to Docker Hub') {
@@ -42,13 +41,6 @@ pipeline {
                     bat "docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%"
                     bat "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     bat "docker push ${DOCKER_IMAGE}:latest"
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    bat "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=/dev/null -i ${SSH_KEY} ubuntu@${SERVER_IP} 'sudo bash /home/ubuntu/deploy.sh'"
                 }
             }
         }
@@ -75,5 +67,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-    
 }
