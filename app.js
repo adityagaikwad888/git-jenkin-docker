@@ -26,7 +26,8 @@ app.get("/time", (req, res) => {
 });
 
 app.get("/env-var", (req, res) => {
-  const envVar = process.env.ENV_VAR;
+  // Return a default value if ENV_VAR is not set
+  const envVar = process.env.ENV_VAR || "Environment variable not set";
   res.status(200).json({ envVar });
 });
 

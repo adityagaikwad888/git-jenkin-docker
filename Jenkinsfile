@@ -21,7 +21,12 @@ pipeline {
         stage('Run Test') {
             steps {
                 echo 'Testing Phase...'
-                bat 'npm test'
+                // Make .env file available for testing
+                withCredentials([file(credentialsId: 'env-file-id', variable: 'ENV_FILE_PATH')]) {
+                    bat 'copy %ENV_FILE_PATH% .env'
+                    bat 'npm test'
+                    bat 'del .env'  // Clean up after tests
+                }
             }
         }
         stage('Build Docker Image') {
