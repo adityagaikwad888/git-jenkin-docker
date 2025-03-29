@@ -30,11 +30,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                // Using the more scalable .env file approach
-                withCredentials([file(credentialsId: 'env-file-id', variable: 'ENV_FILE_PATH')]) {
-                    bat "docker build --build-arg ENV_FILE_PATH=%ENV_FILE_PATH% -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-                }
+                // Using a simpler approach without relying on file copy
+                bat "echo PORT=3000 > .env.temp"
+                bat "echo ENV_VAR=jenkins-build-value >> .env.temp"
+                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
             }
         }
         stage('Push to Docker Hub') {

@@ -13,9 +13,15 @@ RUN npm install --production
 # Copy application files
 COPY . .
 
+# Conditionally copy the .env file if ENV_FILE_PATH is provided
 ARG ENV_FILE_PATH
-COPY $ENV_FILE_PATH .env
-
+RUN if [ -n "$ENV_FILE_PATH" ] && [ -f "$ENV_FILE_PATH" ]; then \
+    cp "$ENV_FILE_PATH" .env; \
+    else \
+    echo "No valid ENV_FILE_PATH provided, using default environment settings"; \
+    echo "PORT=3000" > .env; \
+    echo "ENV_VAR=default-docker-value" >> .env; \
+    fi
 
 # Expose port 3000
 EXPOSE 3000
