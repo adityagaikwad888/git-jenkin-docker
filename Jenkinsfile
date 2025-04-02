@@ -4,10 +4,7 @@ pipeline {
         DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "adityagaikwad888/node-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-        SERVER_IP = '3.110.222.51' // Your actual EC2 IP
-        SSH_USER = 'ubuntu' // Or ec2-user depending on your AMI
-        // SSH_KEY = credentials('amd_practice_ec2_key')
-        SSH_KEY = "/c/Users/adity/Downloads/AMD.pem"
+
     }
     
     stages {
