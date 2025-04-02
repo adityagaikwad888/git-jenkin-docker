@@ -4,7 +4,7 @@ pipeline {
         DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "adityagaikwad888/node-app"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-
+        
     }
     
     stages {
@@ -39,13 +39,6 @@ pipeline {
                     bat "docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%"
                     bat "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     bat "docker push ${DOCKER_IMAGE}:latest"
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    bat "ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o UserKnownHostsFile=/dev/null -i ${SSH_KEY} ubuntu@${SERVER_IP} 'sudo bash /home/ubuntu/deploy.sh'"
                 }
             }
         }
